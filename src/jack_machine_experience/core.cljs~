@@ -1,2 +1,0 @@
-(ns jack-machine-experience.core
-  (:require [om.core :as om]))
