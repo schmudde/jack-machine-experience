@@ -16,8 +16,8 @@
   :cljsbuild {
               :builds [{:id "dev"
                         :source-paths ["src"]
-                        :figwheel true
-                        :compiler {
+                        :figwheel {:websocket-host :js-client-host }
+                         :compiler {
                                    :main "jack-machine-experience.core"
                                    :output-to "resources/public/js/main.js"
                                    :output-dir "resources/public/cljs"
