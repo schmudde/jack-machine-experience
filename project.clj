@@ -10,7 +10,8 @@
                  [lein-figwheel "0.5.8"]
                  [ring "1.5.0"]
                  [metosin/ring-http-response "0.6.5"]
-                 [compojure "1.5.1"]]
+                 [compojure "1.5.1"]
+                 [hiccup "1.0.5"]]
   :plugins [[lein-cljsbuild "1.1.4"]
             [lein-figwheel "0.5.8"]]
   :cljsbuild {

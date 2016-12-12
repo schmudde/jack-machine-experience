@@ -10,10 +10,8 @@
 (defui HelloWorld
   Object
   (render [this]
-          (dom/div nil "Hello World! Figwheel!!")))
+          (dom/div nil "Hello World! Figwheel!!!!!!")))
 
 (def hello (om/factory HelloWorld))
 
 (js/ReactDOM.render (hello) (gdom/getElement "app"))
-
-;; (dom/render-to-str (hello))

@@ -1,5 +1,5 @@
 (ns jack-machine-experience.page
-  (:require #?@(:cljs [[goog.dom :as gdom]])
+  (:require #?@(:cljs [[goog.dom :as gdom]]) ;; probably don't need this interop
                       [om.next :as om :refer [defui]]
                       [om.dom :as dom]))
 
