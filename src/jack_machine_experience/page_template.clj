@@ -9,5 +9,5 @@
       [:title "Jack and the Machine"]]
      [:body
       [:section#server-side page]
-      [:div#app]
+      [:div#cljs-content]
       (hiccup/include-js "/js/main.js")])))

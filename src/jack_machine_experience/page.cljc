@@ -6,7 +6,7 @@
 (defui HelloWorld
   Object
   (render [this]
-          (dom/div nil "Hello World!")))
+          (dom/div nil "Hello World!! page.cljc")))
 
 (def hello (om/factory HelloWorld))
 

@@ -11,7 +11,7 @@
    (str (:remote-addr request) " !!! " (:headers request))))
 
 (compojure/defroutes handler
-  (compojure/GET "/" request (page-template/render-page))
+   (compojure/GET "/" request (page-template/render-page))
    (compojure/GET "/jack" request (str "<p>the id is: "))
    (compojure/GET "/machine" request (str "<p>the id is: "))
    (compojure/GET "/interactive" request (str "<p>the id is: "))
@@ -19,10 +19,6 @@
    (route/resources "/")
    (route/not-found "Not Found!")
    )
-
-(defn testers []
-  "yo"
-  (page-template/render-page))
 
 ;; (compojure/defroutes app-routes
 ;;   (route/resources "/")

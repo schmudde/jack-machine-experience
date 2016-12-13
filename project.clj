@@ -7,18 +7,19 @@
                  [org.clojure/clojurescript "1.9.293"]
                  [org.omcljs/om "1.0.0-alpha47"]
                  [racehub/om-bootstrap "0.6.1"]
-                 [lein-figwheel "0.5.8"]
+                 ;;[lein-figwheel "0.5.8"]
+                 [figwheel-sidecar "0.5.8"]
                  [ring "1.5.0"]
                  [metosin/ring-http-response "0.6.5"]
                  [compojure "1.5.1"]
                  [hiccup "1.0.5"]]
-  :plugins [[lein-cljsbuild "1.1.4"]
-            [lein-figwheel "0.5.8"]]
+  :plugins [[lein-cljsbuild "1.1.4"]]
+;;            [lein-figwheel "0.5.8"]
   :cljsbuild {
               :builds [{:id "dev"
                         :source-paths ["src"]
-                        :figwheel {:websocket-host :js-client-host }
-                         :compiler {
+                        ;; :figwheel {:websocket-host :js-client-host }
+                        :compiler {
                                    :main "jack-machine-experience.core"
                                    :output-to "resources/public/js/main.js"
                                    :output-dir "resources/public/cljs"
@@ -33,10 +34,10 @@
                                    :optimizations :advanced
                                    :pretty-print false}}
                        ]}
-  :figwheel {
-             :http-server-root "public"
-             :server-port 3449
-             :server-ip "172.16.61.133"
-             :css-dirs ["resources/public/css"]
-             }
+  ;; :figwheel {
+  ;;            :http-server-root "public"
+  ;;            :server-port 3449
+  ;;            :server-ip "172.16.61.133"
+  ;;            :css-dirs ["resources/public/css"]
+  ;;           }
   :main jack-machine-experience.core)
