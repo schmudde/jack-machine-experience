@@ -5,7 +5,7 @@
  {:figwheel-options {
                      :http-server-root "public"
                      :server-port 3449
-                     :server-ip "172.16.61.133"
+                     :server-ip "127.0.0.1"
                      :css-dirs ["resources/public/css"]
                      :ring-handler 'jack-machine-experience.server/handler
                      }

@@ -6,9 +6,9 @@
             [ring.middleware.reload :refer [wrap-reload]]
             [jack-machine-experience.page-template :as page-template]))
 
-(defn response-handler [request]
-  (response/ok
-   (str (:remote-addr request) " !!! " (:headers request))))
+;; (defn response-handler [request]
+;;   (response/ok
+;;    (str (:remote-addr request) " !!! " (:headers request))))
 
 (compojure/defroutes handler
    (compojure/GET "/" request (page-template/render-page))
@@ -16,15 +16,8 @@
    (compojure/GET "/machine" request (str "<p>the id is: "))
    (compojure/GET "/interactive" request (str "<p>the id is: "))
    (compojure/GET "/team" request (str "<p>the id is: " ))
-   (route/resources "/")
-   (route/not-found "Not Found!")
-   )
-
-;; (compojure/defroutes app-routes
-;;   (route/resources "/")
-;;  (route/not-found "Not Found!"))
-
-;(compojure/routes handler app-routes)
+   (route/resources "/") ;; CSS, JS, etc...
+   (route/not-found "Not Found!"))
 
 (defn -main []
   (jetty/run-jetty

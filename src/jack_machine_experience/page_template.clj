@@ -10,4 +10,7 @@
      [:body
       [:section#server-side page]
       [:div#cljs-content]
-      (hiccup/include-js "/js/main.js")])))
+      (hiccup/include-js "/js/main.js")
+      [:div [:a "Jack"]]
+      [:div [:a "Machine"]]
+      ])))

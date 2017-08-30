@@ -2,6 +2,8 @@
 /classes
 /checkouts
 /out
+/resources/public/js/main.js
+/resources/public/js
 /resources/public/cljs
 pom.xml
 pom.xml.asc
