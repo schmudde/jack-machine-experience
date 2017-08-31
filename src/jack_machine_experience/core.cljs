@@ -6,6 +6,7 @@
 
 (enable-console-print!)
 
+(println "yeeessss")
 
 ;; TODO - Check this very simple state updater with a browser REPL. Is @state updated? If so, try it with IQuery, parsing, reads, and mutation (comment this and uncomment the code below)
 
