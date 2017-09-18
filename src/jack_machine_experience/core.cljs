@@ -1,27 +1,52 @@
 (ns jack-machine-experience.core
-  (:require [goog.dom :as gdom]
-            [om.next :as om :refer-macros [defui]]
-            [om.dom :as dom]
-            [jack-machine-experience.page :as page]))
+  (:require [reagent.core :as reagent]
+            [re-frame.core :as rf]))
 
 (enable-console-print!)
 
-(println "yeeessss")
+;; 1 - Create the broad dispatch, which is not the data iself
 
-;; TODO - Check this very simple state updater with a browser REPL. Is @state updated? If so, try it with IQuery, parsing, reads, and mutation (comment this and uncomment the code below)
+(defn dispatch-screen-locale [section]
+  (rf/dispatch [:screen section]))
 
-(def reconciler
-  (om/reconciler {:state page/state
-                 }))
+;; 2 - Handle the dispatch by updating the data:
+    ;; 1) On the initial load - initalize the data (in this case, data = locale)
+    ;; 2) Any time the user requests a screen change - update the data (in this case, data = locale)
 
-(om/add-root! reconciler
-  page/Input
-  (gdom/getElement "cljs-content"))
+(rf/reg-event-db
+ :initialize
+ (fn [_ _]
+   {:locale "Jack and the Machine"}))
 
-;; (def reconciler
-;;   (om/reconciler {:state page/state
-;;                   :parser (om/parser {:read page/reader :mutate page/mutater})}))
+(rf/reg-event-db
+ :screen-change
+ (fn [db [_ new-screen]]
+   (assoc db :locale new-screen)))
 
-;; (om/add-root! reconciler
-;;   page/EmailForm
-;;   (gdom/getElement "cljs-content"))
+;; 4 - Query the data to see if it has changed. In this case, data = locale
+
+(rf/reg-sub
+ :locale
+ (fn [db _]
+   (:locale db)))
+
+;; 5 - Subscribe to the query of the data and create the view, that way if it is updated, we update it.
+
+(defn screen-locale []
+  [:h1
+    @(rf/subscribe [:locale])])
+
+(defn screen-changer
+  []
+  [:div
+   [:button {:on-click #(rf/dispatch [:screen-change "Top Screen"])} "Switch Screens"]])
+
+(defn ui []
+  [:div
+   [screen-locale]
+   [screen-changer]])
+
+(defn ^:export run []
+  (rf/dispatch-sync [:initialize])
+  (reagent/render [ui]
+                  (js/document.getElementById "app")))

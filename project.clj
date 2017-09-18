@@ -6,34 +6,33 @@
   :dependencies [[org.clojure/clojure "1.9.0-alpha14"]
                  [org.clojure/clojurescript "1.9.293"]
                  [org.omcljs/om "1.0.0-alpha48"]
-                 [racehub/om-bootstrap "0.6.1"]
-                 ;;[lein-figwheel "0.5.8"]
+                 [re-frame "0.10.0"]
+                 ;;[day8.re-frame/http-fx "0.1.3"] ;; effect handler depends entirely on the API of cljs-ajax
+                 [reagent "0.7.0" :exclusions [cljsjs/react cljsjs/react-dom cljsjs/react-dom-server]]
+                 ;;[racehub/om-bootstrap "0.6.1"]
                  [figwheel-sidecar "0.5.8"]
                  [ring "1.5.0"]
                  [metosin/ring-http-response "0.6.5"]
                  [compojure "1.5.1"]
                  [hiccup "1.0.5"]]
-  :plugins [[lein-cljsbuild "1.1.4"]
+  :plugins [[lein-cljsbuild "1.1.5"]
             [lein-figwheel "0.5.13"]]
   :profiles {:dev {:dependencies [[com.cemerick/piggieback "0.2.2"]
                                   [figwheel-sidecar "0.5.8"]
                                   [org.clojure/tools.nrepl "0.2.10"]]
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}}}
 
-  :clean-targets ^{:protect false} ["resources/public/js/out"
-                                    "resources/public/js/flappy_bird_demo.js"
-                                    :target-path]
   :source-paths ["src"]
   :cljsbuild {
               :builds [{:id "dev"
                         :source-paths ["src"]
                         ;;:figwheel {:websocket-host :js-client-host }
-                        :figwheel true
+                        :figwheel {:on-jsload "jack-machine-experience.core/run"}
                         :compiler {
                                    :main "jack-machine-experience.core"
                                    :output-to "resources/public/js/main.js"
                                    :output-dir "resources/public/js/out"
-                                   :asset-path "cljs"
+                                   :asset-path "js/out"
                                    :optimizations :none
                                    :source-map true
                                    }}
