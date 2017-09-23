@@ -33,16 +33,26 @@
 ;; 5 - Subscribe to the query of the data and create the view, that way if it is updated, we update it.
 
 (defn screen-locale []
-  [:h1
+  [:div.f-headline.lh-solid.tc
     @(rf/subscribe [:locale])])
 
 (defn screen-changer
   []
-  [:div
-   [:button {:on-click #(rf/dispatch [:screen-change "Top Screen"])} "Switch Screens"]])
+  [:div.w-100
+  [:div.flex.items-center
+   [:div {:style {:float "left"}}
+    [:button {:on-click #(rf/dispatch [:screen-change "Welcome"])} "←"]]
+   [:div {:style {:float "left"}}
+    [:button {:on-click #(rf/dispatch [:screen-change "NYC Mainframe"])
+              :style {:display "block"}} "↑"]
+    [:button {:on-click #(rf/dispatch [:screen-change "Global PC"])
+              :style {:display "block"}}"↓"]]
+   [:div {:style {:float "left"}}
+    [:button {:on-click #(rf/dispatch [:screen-change "Lodz Tabulator"])} "→"]]]])
+
 
 (defn ui []
-  [:div
+  [:div.pa4
    [screen-locale]
    [screen-changer]])
 
