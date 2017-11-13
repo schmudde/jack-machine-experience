@@ -53,10 +53,9 @@
 
 (defn screen-locale []
   [:div
-   [:video {:poster "TODO" :id "bgvid" :auto-play true :loop true}
-    [:source {:src (str "vid/" @(rf/subscribe [:locale-bg]) ".ogg") :type "video/ogg"}]
-     ;; [:source {:src "vid/borderlessBG.webm" :type "video/webm"}]
-     ]
+   [:video {:src (str "vid/" @(rf/subscribe [:locale-bg]) ".ogg") :type "video/ogg"
+            :poster "TODO" :id "bgvid" :auto-play true :loop true}
+    [:source {:src (str "vid/" @(rf/subscribe [:locale-bg]) ".webm") :type "video/webm"}]]
    [:div.f-headline.lh-solid.tc
     @(rf/subscribe [:locale])]
    [:p.sans-serif @(rf/subscribe [:locale-content])]])
