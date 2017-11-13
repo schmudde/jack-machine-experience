@@ -22,15 +22,17 @@
 (rf/reg-event-db
  :initialize
  (fn [_ _]
-   {:locale "Jack and the Machine" :locale-content "" :locale-bg ""}))
+   {:locale "Jack and the Machine" :locale-content "" :locale-bg ""
+    :buttons {:up (:north @direction) :down (:south @direction)}}))
 
 (rf/reg-event-db
  :screen-change
  (fn [db [_ current-screen]]
    (let [{:keys [locale locale-content locale-bg]} current-screen]
-     (assoc db :locale locale :locale-content locale-content :locale-bg locale-bg))))
+     (assoc db :locale locale :locale-content locale-content :locale-bg locale-bg
+               :buttons {:up (:north @direction) :down (:south @direction)}))))
 
-;; 4 - Query the data to see if it has changed. In this case, data = locale
+;; 4 - Query the data to see if it has changed.
 
 (rf/reg-sub
  :locale
@@ -45,7 +47,12 @@
 (rf/reg-sub
  :locale-bg
  (fn [db _]
-    (:locale-bg db)))
+   (:locale-bg db)))
+
+(rf/reg-sub
+ :buttons
+ (fn [db _]
+   (:buttons db)))
 
 ;; 5 - Subscribe to the query of the data and create the view, that way if it is updated, we update it.
 
@@ -54,8 +61,8 @@
 (defn screen-locale []
   [:div
    [:video {:src (str "vid/" @(rf/subscribe [:locale-bg]) ".ogg") :type "video/ogg"
-            :poster "TODO" :id "bgvid" :auto-play true :loop true}
-    [:source {:src (str "vid/" @(rf/subscribe [:locale-bg]) ".webm") :type "video/webm"}]]
+            :poster "TODO" :id "bgvid" :auto-play "autoplay" :loop true}
+    [:source {:src (str "vid/" @(rf/subscribe [:locale-bg]) ".webm") :type "video/webm;codecs='vp8, vorbis'"}]]
    [:div.f-headline.lh-solid.tc
     @(rf/subscribe [:locale])]
    [:p.sans-serif @(rf/subscribe [:locale-content])]])
@@ -69,20 +76,21 @@
         nil)
       (rf/dispatch [:screen-change content]))))
 
-(defn screen-changer
-  []
-  [:div.w-100
-   [:div.flex.justify-center
-   [:div.pt6.flex.items-center
-    [:div {:style {:float "left"}}
-     [:button {:on-click (update-state! :west)} "←"]]
-    [:div {:style {:float "left"}}
-     [:button {:on-click (update-state! :north)
-               :style {:display "block"}} "↑"]
-     [:button {:on-click (update-state! :south)
-               :style {:display "block"}}"↓"]]
-    [:div {:style {:float "left"}}
-     [:button {:on-click (update-state! :east)} "→"]]]]])
+(defn screen-changer []
+    [:div.w-100
+     [:div.flex.justify-center
+      [:div.pt6.flex.items-center
+       [:div {:style {:float "left"}}
+        [:button {:on-click (update-state! :west)} "←"]]
+       [:div {:style {:float "left"}}
+        [:button
+         {:on-click (update-state! :north)
+          :style (if (:up @(rf/subscribe [:buttons])) {:display "block"} {:display "none"})} "↑"]
+        [:button
+         {:on-click (update-state! :south)
+          :style (if (:down @(rf/subscribe [:buttons])) {:display "block"} {:display "none"})}"↓"]]
+       [:div {:style {:float "left"}}
+        [:button {:on-click (update-state! :east)} "→"]]]]])
 
 (defn ui []
   [:div.pa4
