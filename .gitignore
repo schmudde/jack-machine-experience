@@ -5,6 +5,8 @@
 resources/public/js/main.js
 resources/public/js
 resources/public/cljs
+resources/public/vid/borderlessBG.ogg
+resources/public/vid/borderlessBG.webm
 pom.xml
 pom.xml.asc
 *.jar

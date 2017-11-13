@@ -19,6 +19,7 @@
     <title>Jack and the Machine: An Interactive Documentary</title>
   </head>
   <body class="flex flex-column min-vh-100">
+
     <div id="app" class="flex-auto"></div>
     <script src="js/main.js" type="text/javascript"></script>
 
@@ -27,6 +28,20 @@
       jack_machine_experience.core.run();
       }
     </script>
+
+<script type="text/javascript">
+    function reload(){
+            var container = document.getElementById("bgvid");
+            var content = container.innerHTML;
+            container.innerHTML= content;
+    }
+
+    function reload2() {
+        document.getElementById("bgvid").reload();
+    }
+</script>
+<a href="javascript: reload()">Reload</a>
+<div id="yourDiv">The content that you want to refresh/reload</div>
 
 <footer class="pv4 ph3 ph5-ns tc">
   <a class="link near-black hover-silver dib h2 w2 mr3" href="https://facebook.com title="Facebook">

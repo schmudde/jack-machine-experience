@@ -1,6 +1,6 @@
 # jack-machine-experience
 
-A Clojure library designed to ... well, that part is up to you.
+`lein cljsbuild` and open `index.html`
 
 ## Usage
 
