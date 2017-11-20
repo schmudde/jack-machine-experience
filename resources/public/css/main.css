@@ -1,3 +1,20 @@
+:root {
+    --main-color: white;
+}
+
+p {
+    color: var(--main-color);
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+.link {
+    color: var(--main-color);
+}
+
+.f-headline {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--main-color);
+}
 
 .dib {
     display: inline-block;
@@ -8,24 +25,25 @@
 }
 
 .link {
+    color: var(--main-color);
     text-decoration: none;
-    transition: color .15s ease-in;
 }
 
-.link:link, .link:visited {
-    transition: color .15s ease-in;
+.link:link, .link:visited{
+    color: var(--main-color);
+    transition: var(--main-color) .15s ease-in;
 }
 
 .link:hover {
-    transition: color .15s ease-in;
+    transition: var(--main-color) .15s ease-in;
 }
 
 .link:active {
-    transition: color .15s ease-in;
+    transition: var(--main-color) .15s ease-in;
 }
 
 .link:focus {
-    transition: color .15s ease-in;
+    transition: var(--main-color) .15s ease-in;
     outline: 1px dotted currentColor;
 }
 
@@ -87,4 +105,23 @@ html {
 	width: auto; height: auto; z-index: -100;
 	background: url(polina.jpg) no-repeat;
 	background-size: cover;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    padding:0;
+    margin:0;
+    left: 0px;
+    top: 0px;
+    z-index: -1000;
+    overflow:hidden;
+}
+
+.videoPlayer {
+    min-height: 100%;
+    position:absolute;
+    bottom:0;
+    left:0;
 }
