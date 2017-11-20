@@ -2,13 +2,14 @@
   (:require [reagent.core :as reagent]
             [re-frame.core :as rf]))
 
-;;(enable-console-print!)
+(enable-console-print!)
 
-(def welcome {:locale "Welcome" :locale-content "" :locale-bg "commodore"})
-(def cold-war {:locale "NYC Mainframe" :locale-content "[[Animation] Mainframes: Missile Defense, Missile Guidance, Financial Transactions, Flight Scheduling, Atomic Research, Surveillance] Dominated by multinational corporations with deep corporate and government contacts: IBM, Sperry Rand, Burroughs, General Electric, and Honeywell, their flagship mainframes sold in the thousands and tens-of-thousands. These prestige products were accompanied by a range of number crunching, time keeping, and word processing products to outfit the rest of the office. Smaller business equipment suppliers, like Jack Tramiel's Commodore Business Machines, were tremendously disadvantaged. They built products that went direct to consumer, competing on price with the post-war global order their marketplace. Commodore ran lean and these handicaps became attributes as Tramiel's business philosophy began to align with the forthcoming technological revolution." :locale-bg "ibm"})
-(def pc {:locale "Global PC" :locale-content "" :locale-bg "pet"})
-(def ww2 {:locale "Lodz Tabulator" :locale-content "" :locale-bg "dehomag" :locale-puzzle 1})
+(def welcome {:locale "Welcome" :cardinality :east :locale-content "" :locale-bg "commodore"})
+(def cold-war {:locale "NYC Mainframe" :cardinality :north :locale-content "[[Animation] Mainframes: Missile Defense, Missile Guidance, Financial Transactions, Flight Scheduling, Atomic Research, Surveillance] Dominated by multinational corporations with deep corporate and government contacts: IBM, Sperry Rand, Burroughs, General Electric, and Honeywell, their flagship mainframes sold in the thousands and tens-of-thousands. These prestige products were accompanied by a range of number crunching, time keeping, and word processing products to outfit the rest of the office. Smaller business equipment suppliers, like Jack Tramiel's Commodore Business Machines, were tremendously disadvantaged. They built products that went direct to consumer, competing on price with the post-war global order their marketplace. Commodore ran lean and these handicaps became attributes as Tramiel's business philosophy began to align with the forthcoming technological revolution." :locale-bg "ibm"})
+(def pc {:locale "Global PC" :cardinality :south  :locale-content "" :locale-bg "pet"})
+(def ww2 {:locale "Lodz Tabulator" :cardinality :west  :locale-content "" :locale-bg "dehomag" :locale-puzzle {:box-1 true :box-2 false :box-3 false}})
 (def direction (atom {:north nil :west ww2 :south nil :east welcome}))
+(def checkboxes (atom {:box-1 false :box-2 false :box-3 false}))
 
 ;; 1 - Create the broad dispatch, which is not the data iself
 
@@ -22,15 +23,22 @@
 (rf/reg-event-db
  :initialize
  (fn [_ _]
-   {:locale "Jack and the Machine" :locale-content "" :locale-bg "jatm"
+   {:locale "Jack and the Machine" :cardinality nil :locale-content "" :locale-bg "jatm"
     :buttons {:up (:north @direction) :down (:south @direction)}}))
 
 (rf/reg-event-db
  :screen-change
  (fn [db [_ current-screen]]
-   (let [{:keys [locale locale-content locale-bg]} current-screen]
-     (assoc db :locale locale :locale-content locale-content :locale-bg locale-bg
-               :buttons {:up (:north @direction) :down (:south @direction)}))))
+   (let [{:keys [locale cardinality locale-content locale-bg locale-puzzle]} current-screen]
+     (assoc db :locale locale :cardinality cardinality :locale-content locale-content :locale-bg locale-bg
+               :locale-puzzle locale-puzzle :buttons {:up (:north @direction) :down (:south @direction)}))))
+
+(rf/reg-event-db
+ :code-change
+ (fn [db [_ current-code]]
+   (let [{:keys [box-1 box-2 box-3]} current-code]
+     (println "Current code: " current-code)
+     (assoc db :box-1 box-1 :box-2 box-2 :box-3 box-3))))
 
 ;; 4 - Query the data to see if it has changed.
 
@@ -38,6 +46,11 @@
  :locale
  (fn [db _]
    (:locale db)))
+
+(rf/reg-sub
+ :cardinality
+ (fn [db _]
+   (:cardinality db)))
 
 (rf/reg-sub
  :locale-content
@@ -50,19 +63,54 @@
    (:locale-bg db)))
 
 (rf/reg-sub
+ :locale-puzzle
+ (fn [db _]
+   (:locale-puzzle db)))
+
+(rf/reg-sub
  :buttons
  (fn [db _]
    (:buttons db)))
 
+(rf/reg-sub
+ :checkboxes
+ (fn [db _]
+   (:checkboxes db)))
+
 ;; 5 - Subscribe to the query of the data and create the view, that way if it is updated, we update it.
 
-(defn check-box []
-  [:div
-   ;;[:input {:type "check-box" :id "box-one" :name "box-two" :value @(rf/subscribe [:locale-puzzle])}]
-   ])
+(defn update-available-state! [cardinality]
+    ;;(println "Update available state to: " cardinality)
+      (case cardinality
+        :west (reset! direction (assoc @direction :north cold-war))
+        :north (reset! direction (assoc @direction :south pc))
+        nil)
+      )
+
+(defn update-checked-state! [box-number content puzzle-solution]
+  (fn [event]
+    (let [user-value (-> event .-target .-checked)]
+      (if user-value
+        (reset! checkboxes (assoc @checkboxes box-number true))
+        (reset! checkboxes (assoc @checkboxes box-number false)))
+
+      (when (= puzzle-solution @checkboxes) (update-available-state! (:cardinality content)))
+      (rf/dispatch [:code-change @checkboxes])
+      (rf/dispatch [:screen-change content])
+
+      )))
+
+(defn check-box [cardinality]
+  (let [puzzle-solution @(rf/subscribe [:locale-puzzle])
+        content (cardinality @direction)]
+    [:div
+     [:input {:type "checkbox" :id "box-1" :on-change (update-checked-state! :box-1 content puzzle-solution) }]
+     [:input {:type "checkbox" :id "box-2" :on-change (update-checked-state! :box-2 content puzzle-solution) }]
+     [:input {:type "checkbox" :id "box-3" :on-change (update-checked-state! :box-3 content puzzle-solution) }]]))
 
 
 (defn screen-locale []
+  (let [current-cardinality @(rf/subscribe [:cardinality])]
   [:div
    [:div.container
     [:video.videoPlayer {:src (str "vid/" @(rf/subscribe [:locale-bg]) ".webm") :type "video/webm;codecs='vp8, vorbis'"
@@ -70,14 +118,15 @@
      [:source {:src (str "vid/" @(rf/subscribe [:locale-bg]) ".ogg") :type "video/ogg"}]]]
    [:div.f-headline.lh-solid.tc
     @(rf/subscribe [:locale])]
-   (check-box)
-   [:p @(rf/subscribe [:locale-content])]])
+   ;;[:p (str @(rf/subscribe [:cardinality]))]
+   (when current-cardinality (check-box current-cardinality))
+   [:p @(rf/subscribe [:locale-content])]]))
 
-(defn update-state! [cardinal]
+(defn update-screen-state! [cardinal] ;; THIS IS NOT REALLY USED!
   (fn []
     (when-let [content (cardinal @direction)]
       (case cardinal
-        :west (reset! direction (assoc @direction :north cold-war))
+        ;;:west (reset! direction (assoc @direction :north cold-war))
         :north (reset! direction (assoc @direction :south pc))
         nil)
       (rf/dispatch [:screen-change content]))))
@@ -87,16 +136,16 @@
      [:div.flex.justify-center
       [:div.pt6.flex.items-center
        [:div {:style {:float "left"}}
-        [:button {:on-click (update-state! :west)} "←"]]
+        [:button {:on-click (update-screen-state! :west)} "←"]]
        [:div {:style {:float "left"}}
         [:button
-         {:on-click (update-state! :north)
+         {:on-click (update-screen-state! :north)
           :style (if (:up @(rf/subscribe [:buttons])) {:display "block"} {:display "none"})} "↑"]
         [:button
-         {:on-click (update-state! :south)
+         {:on-click (update-screen-state! :south)
           :style (if (:down @(rf/subscribe [:buttons])) {:display "block"} {:display "none"})}"↓"]]
        [:div {:style {:float "left"}}
-        [:button {:on-click (update-state! :east)} "→"]]]]])
+        [:button {:on-click (update-screen-state! :east)} "→"]]]]])
 
 (defn ui []
   [:div.pa4
